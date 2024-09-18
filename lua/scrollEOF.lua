@@ -29,6 +29,11 @@ local function check_eof_scrolloff(ev)
   local visual_distance_to_eof = win_height - win_cur_line
 
   if visual_distance_to_eof < scrolloff then
+    if vim.o.scrolloff >= win_height / 2 then
+      vim.cmd('normal! zz')
+      return
+    end
+
     local win_view = vim.fn.winsaveview()
     vim.fn.winrestview({ topline = win_view.topline + scrolloff - visual_distance_to_eof })
   end
@@ -43,7 +48,6 @@ local default_opts = {
 }
 
 M.setup = function(opts)
-
   if opts == nil then
     opts = default_opts
   else
@@ -69,7 +73,7 @@ M.setup = function(opts)
   M.opts.disabled_modes = disabled_modes_hashmap
 
   local autocmds = { 'CursorMoved', 'WinScrolled' }
-  if M.opts.insert_mode then
+  if true or M.opts.insert_mode then
     table.insert(autocmds, 'CursorMovedI')
   end
 
